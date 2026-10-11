@@ -1,87 +1,243 @@
-<style>
-  body { 
-    margin: 0; 
-    background: transparent; 
-    font-family: Arial, sans-serif;
-  }
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget WhatsApp Centrado</title>
+  
+  <style>
+    /* Aseguramos que el viewport del iframe esté libre de desbordamientos */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
 
-  /* Centrado absoluto e inmune al colapso del iframe */
-  .wa {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Centrado matemático exacto */
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    /* Animación de entrada combinada con el centrado */
-    animation: entrance 0.7s ease forwards;
-    opacity: 0;
-  }
+    /* Centrado matemático absoluto inmune al colapso del body o iframe */
+    .wa {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      /* Desplaza el elemento exactamente la mitad de su propio ancho y alto hacia el centro */
+      transform: translate(-50%, -50%); 
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      /* Animación fluida acoplada al centrado */
+      animation: entrance 0.7s ease forwards;
+      opacity: 0;
+      z-index: 99999;
+    }
 
-  @keyframes entrance {
-    0% { transform: translate(-50%, -30%); opacity: 0; }
-    60% { transform: translate(-50%, -52%); opacity: 1; }
-    100% { transform: translate(-50%, -50%); opacity: 1; }
-  }
+    @keyframes entrance {
+      0% { transform: translate(-50%, -35%); opacity: 0; }
+      60% { transform: translate(-50%, -52%); opacity: 1; }
+      100% { transform: translate(-50%, -50%); opacity: 1; }
+    }
 
-  .btn {
-    width: 70px;
-    height: 70px;
-    background: #25D366;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,.35);
-    animation: floatSoft 3s ease-in-out infinite;
-  }
-
-  /* El mensaje flotando de forma natural arriba del botón */
-  .msg {
-    background: white;
-    padding: 16px 18px;
-    border-radius: 12px;
-    width: 280px;
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 15px; /* Crea la separación física */
-    text-align: center;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.28);
-    
-    /* Efecto de aparición suave interna */
-    opacity: 0;
-    transition: all 0.35s ease;
-  }
-
-  .wa.show .msg {
-    opacity: 1;
-  }
-
-  @keyframes floatSoft {
-    0%   { transform: translateY(0); }
-    50%  { transform: translateY(-4px); }
-    100% { transform: translateY(0); }
-  }
-
-  /* Adaptación Responsiva dentro del Iframe */
-  @media(max-width:768px){
     .btn {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+      animation: floatSoft 3s ease-in-out infinite;
+      cursor: pointer;
     }
 
-    .btn svg {
-      width: 48px;
-      height: 48px;
-    }
-
+    /* Cuadro de texto posicionado arriba del botón de manera fluida */
     .msg {
-      width: 290px;
-      font-size: 16px;
-      padding: 16px;
+      background: white;
+      padding: 16px 18px;
+      border-radius: 12px;
+      width: 280px;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 15px; /* Crea la separación física controlada con el botón */
+      text-align: center;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.28);
+      color: #333333;
+      
+      opacity: 0;
+      transform: translateY(10px) scale(0.96);
+      transition: all 0.35s ease;
+    }
+
+    .wa.show .msg {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    @keyframes floatSoft {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(-4px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Ajustes responsivos internos para pantallas pequeñas o iframes reducidos */
+    @media(max-width:768px){
+      .btn {
+        width: 80px;
+        height: 80px;
+      }
+
+      .btn svg {
+        width: 48px;
+        height: 48px;
+      }
+
+      .msg {
+        width: 290px;
+        font-size: 16px;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wa" id="wa">
+
+  <div class="msg" id="msg">
+    Estamos fuera de horario. Dejanos tu mensaje y el lunes te respondemos primero 👍<br><br>
+    <span style="font-size:14px; opacity:0.75;">✍️ Completá tus datos y te ayudamos más rápido</span>
+  </div>
+
+  <a id="link" target="_blank" href="https://wa.me">
+    <div class="btn">
+      <svg viewBox="0 0 32 32" width="30" height="30" fill="white">
+        <path d="M19.11 17.17c-.28-.14-1.64-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.4-1.66-1.56-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.83-2.02-.22-.53-.44-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.28-.96.94-.96 2.3s.98 2.67 1.12 2.86c.14.18 1.93 2.94 4.68 4.12.66.28 1.18.45 1.58.57.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.2-.53-.34z"></path>
+        <path d="M16.01 3C9.38 3 4 8.38 4 15c0 2.64.86 5.08 2.32 7.07L5 29l7.15-1.87C14.09 28.1 15.99 28.5 18 28.5c6.63 0 12.01-5.38 12.01-12S22.63 3 16.01 3zm0 22.5c-1.83 0-3.6-.49-5.13-1.41l-.37-.22-4.24 1.11 1.13-4.13-.24-.38C6.11 18.98 5.5 17.03 5.5 15c0-5.8 4.71-10.5 10.51-10.5S26.52 9.2 26.52 15 21.81 25.5 16.01 25.5z"></path>
+      </svg>
+    </div>
+  </a>
+
+</div>
+
+<script>
+  const wa = document.getElementById('wa');
+  const msg = document.getElementById('msg');
+  const link = document.getElementById('link');
+
+  // -------- PARÁMETROS --------
+  const params = new URLSearchParams(window.location.search);
+  const pagina = params.get('p') || "home";
+
+  // -------- HORARIO ARG --------
+  const now = new Date();
+  const options = { timeZone: 'America/Argentina/Buenos_Aires' };
+
+  const hour = parseInt(new Intl.DateTimeFormat('es-AR', {
+    hour: 'numeric',
+    hour12: false,
+    ...options
+  }).format(now));
+
+  const day = new Intl.DateTimeFormat('es-AR', {
+    weekday: 'short',
+    ...options
+  }).format(now).toLowerCase();
+
+  const dias = { lun:1, mar:2, mié:3, jue:4, vie:5, sáb:6, dom:7 };
+  const diaNum = dias[day];
+
+  const isWorkingHours = (diaNum >= 1 && diaNum <= 5) && (hour >= 9 && hour < 17);
+
+  // -------- INTENCIÓN --------
+  const clickedBefore = localStorage.getItem('wa_clicked');
+
+  let mensajeUI = "";
+  let mensajeWA = "";
+
+  // -------- MENSAJE POR PÁGINA --------
+  if (pagina === "planes") {
+    mensajeUI = "¿Querés elegir el mejor plan? 🚀 Te asesoramos en minutos.";
+    mensajeWA = "Hola! Estoy viendo los planes y quiero asesoramiento.";
+  } 
+  else if (pagina === "servicios") {
+    mensajeUI = "Te explicamos cuál plan te conviene según tu negocio.";
+    mensajeWA = "Hola! Vi la página de servicios y quiero más info.";
+  } 
+  else {
+    mensajeUI = "Hacé despegar tu negocio 🚀 ¿En qué te podemos ayudar hoy?";
+    mensajeWA = "Hola! Quiero mas información sobre como puede ayudarme Escaparate AD.";
+  }
+
+  // -------- PRIMER CONTACTO --------
+  if (!clickedBefore && pagina === "planes") {
+    mensajeUI += "<br><br>💡 Te ayudamos a elegir el mejor para tu negocio en 2 minutos.";
+  }
+
+  // -------- USUARIO RECURRENTE --------
+  if (clickedBefore) {
+    mensajeUI = "¡Volviste! 💪💪<br>Seguimos donde lo dejamos 👍";
+    mensajeWA = "Hola! Quiero información sobre como puede ayudarme Escaparate AD.";
+  }
+
+  // -------- FUERA DE HORARIO / FERIADOS --------
+  const feriados = [
+    "2026-01-01",
+    "2026-05-01",
+    "2026-12-25"
+  ];
+
+  const fecha = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+
+  const esFeriado = feriados.includes(fecha);
+  const esViernes = diaNum === 5;
+
+  if (!isWorkingHours || esFeriado) {
+    if (esFeriado) {
+      mensajeUI = "Hoy es feriado. Dejanos tu mensaje y te respondemos el próximo día hábil 👍";
+      mensajeWA = "Hola! Les dejo mi consulta para cuando estén disponibles.";
+    }
+    else if (esViernes && hour >= 17) {
+      mensajeUI = "Ya cerramos por hoy. Dejanos tu mensaje y el Lunes te respondemos primero 👍";
+      mensajeWA = "Hola! Les dejo mi consulta para retomar el Lunes.";
+    }
+    else if (diaNum === 6 || diaNum === 7) {
+      mensajeUI = "Estamos fuera de horario. Dejanos tu mensaje y el lunes te respondemos primero 👍";
+      mensajeWA = "Hola! Les dejo mi consulta para retomar el lunes.";
+    }
+    else {
+      mensajeUI = "Ahora estamos fuera de horario, pero dejanos tu consulta y mañana te respondemos primero 👍";
+      mensajeWA = "Hola! Les dejo mi consulta para cuando estén disponibles.";
     }
   }
-</style>
+
+  // -------- MOSTRAR MENSAJE --------
+  mensajeUI += "<br><br><span style='font-size:14px; opacity:0.75;'>✍️ Completá tus datos y te ayudamos más rápido</span>";
+  if (msg) msg.innerHTML = mensajeUI;
+
+  // -------- LINK DINÁMICO --------
+  const numero = "542604630542";
+  const urlFinal = "https://wa.me" + numero + "?text=" + encodeURIComponent(mensajeWA);
+  link.href = urlFinal;
+
+  // -------- TRACK INTENCIÓN --------
+  link.addEventListener('click', () => {
+    localStorage.setItem('wa_clicked', 'true');
+  });
+
+  // -------- VISIBILIDAD DESPUÉS DEL AJUSTE DOM --------
+  setTimeout(() => {
+    wa.classList.add('show');
+  }, 100);
+</script>
+
+</body>
+</html>
